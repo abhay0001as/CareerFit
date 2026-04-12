@@ -1,14 +1,12 @@
 {
-  "name": "careerfit-project",
+  "name": "careerfit",
   "version": "1.0.0",
-  "description": "Job Matching Portal",
   "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
   "dependencies": {
     "express": "^4.18.2",
-    "mongoose": "^8.2.0",
     "cors": "^2.8.5"
+  },
+  "scripts": {
+    "start": "node server.js"
   }
 }
