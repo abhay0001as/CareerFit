@@ -247,6 +247,47 @@
             </div>
         </div>
     </footer>
+    <script>
+        async function searchJobs() {
+            const jobList = document.getElementById('job-list');
+            if (!jobList) {
+                console.error("Error: Could not find an element with id='job-list' in your HTML.");
+                return;
+            }
+
+            try {
+                // This is the most important change: using the relative path
+                const response = await fetch('/api/jobs');
+
+                if (!response.ok) throw new Error('Server search failed');
+
+                const jobs = await response.json();
+                jobList.innerHTML = ''; // Clear the "Loading" or error message
+
+                if (jobs.length === 0) {
+                    jobList.innerHTML = '<p>No jobs found.</p>';
+                    return;
+                }
+
+                jobs.forEach(job => {
+                    const div = document.createElement('div');
+                    div.style.border = "1px solid #ccc";
+                    div.style.margin = "10px";
+                    div.style.padding = "10px";
+                    div.innerHTML = `
+                        <h3>${job.title}</h3>
+                        <p><strong>Company:</strong> ${job.company}</p>
+                        <p><strong>Category:</strong> ${job.category}</p>
+                    `;
+                    jobList.appendChild(div);
+                });
+
+            } catch (error) {
+                console.error("Connection Error:", error);
+                jobList.innerHTML = `<p style="color:red">Cannot connect to server at https://careerfit-sops.onrender.com</p>`;
+            }
+        }
+    </script>
 </body>
 
 </html>
