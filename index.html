@@ -40,17 +40,24 @@
             display: flex;
             align-items: center;
             text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+            transform: scale(1.02);
         }
 
         .logo-img {
-            height: 40px;
-            margin-right: 12px;
+            height: 50px;
+            width: auto;
         }
 
         .logo-text {
             font-size: 24px;
             font-weight: 800;
             color: var(--brand-blue);
+            margin-left: 10px;
             letter-spacing: -1px;
         }
 
@@ -109,6 +116,7 @@
             font-weight: 600;
             transition: 0.3s;
             border: none;
+            cursor: pointer;
         }
 
         .stats {
@@ -149,11 +157,6 @@
             transition: 0.3s;
         }
 
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
-        }
-
         footer {
             background: var(--brand-dark);
             color: #fff;
@@ -179,33 +182,28 @@
             font-weight: 600;
             margin-top: 15px;
         }
-
-        /* Logo Styling */
-.logo { display: flex; align-items: center; text-decoration: none; transition: 0.3s; }
-.logo:hover { opacity: 0.8; transform: scale(1.02); }
-.logo-img { height: 80px; width: auto; } /* This makes the logo look great in the nav */
     </style>
 </head>
 
 <body>
-<nav>
-    <a href="index.html" class="logo">
-        <img src="logo.png" alt="CareerFit Logo" class="logo-img">
-        <span class="logo-text"
-            style="font-size: 24px; font-weight: 800; color: #0052cc; margin-left: 10px; letter-spacing: -1px;">CareerFit</span>
-    </a>
-    <a href="search.html" class="btn-search" style="padding: 10px 25px; font-size: 14px; text-decoration: none;">Find
-        Jobs</a>
-</nav>
+    <nav>
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="CareerFit Logo" class="logo-img">
+            <span class="logo-text">CareerFit</span>
+        </a>
+        <a href="search.html" class="btn-search" style="padding: 10px 25px; font-size: 14px;">Find Jobs</a>
+    </nav>
 
     <section class="hero">
         <h1>Find Your <span>Verified</span><br>Future Career.</h1>
         <p>A premium platform for Graduates to find high-growth roles directly. No recruitment fees, no spam, just real
             opportunities.</p>
+
         <div class="search-preview" onclick="window.location.href='search.html'">
             <input type="text" placeholder="Search by Degree or Skill..." readonly>
             <span class="btn-search">Explore Now</span>
         </div>
+
         <div class="stats">
             <div class="stat-item"><b>500+</b><span>Live Jobs</span></div>
             <div class="stat-item"><b>100%</b><span>Verified</span></div>
@@ -247,47 +245,6 @@
             </div>
         </div>
     </footer>
-    <script>
-        async function searchJobs() {
-            const jobList = document.getElementById('job-list');
-            if (!jobList) {
-                console.error("Error: Could not find an element with id='job-list' in your HTML.");
-                return;
-            }
-
-            try {
-                // This is the most important change: using the relative path
-                const response = await fetch('/api/jobs');
-
-                if (!response.ok) throw new Error('Server search failed');
-
-                const jobs = await response.json();
-                jobList.innerHTML = ''; // Clear the "Loading" or error message
-
-                if (jobs.length === 0) {
-                    jobList.innerHTML = '<p>No jobs found.</p>';
-                    return;
-                }
-
-                jobs.forEach(job => {
-                    const div = document.createElement('div');
-                    div.style.border = "1px solid #ccc";
-                    div.style.margin = "10px";
-                    div.style.padding = "10px";
-                    div.innerHTML = `
-                        <h3>${job.title}</h3>
-                        <p><strong>Company:</strong> ${job.company}</p>
-                        <p><strong>Category:</strong> ${job.category}</p>
-                    `;
-                    jobList.appendChild(div);
-                });
-
-            } catch (error) {
-                console.error("Connection Error:", error);
-                jobList.innerHTML = `<p style="color:red">Cannot connect to server at https://careerfit-sops.onrender.com</p>`;
-            }
-        }
-    </script>
 </body>
 
 </html>

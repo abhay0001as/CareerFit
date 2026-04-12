@@ -207,9 +207,22 @@
         }
 
         /* Logo Styling */
-.logo { display: flex; align-items: center; text-decoration: none; transition: 0.3s; }
-.logo:hover { opacity: 0.8; transform: scale(1.02); }
-.logo-img { height: 80px; width: auto; }
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+            transform: scale(1.02);
+        }
+
+        .logo-img {
+            height: 80px;
+            width: auto;
+        }
     </style>
 </head>
 
@@ -261,7 +274,7 @@
                     <input type="text" id="searchKeyword" placeholder="e.g. Java, HR, Sales...">
                 </div>
             </div>
-            <button onclick="searchJobs()">Search Jobs</button>
+            <button onclick="searchJobs()" class="btn-action">Search Jobs Now →</button>
         </div>
 
         <h2 class="section-title">Explore by Category</h2>
@@ -312,7 +325,7 @@
             const degree = document.getElementById('searchDegree').value;
 
             try {
-                const res = await fetch(API_URL);
+                const response = await fetch('/api/jobs');
                 if (!res.ok) throw new Error('API request failed');
 
                 const jobs = await res.json();
