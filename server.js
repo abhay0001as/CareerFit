@@ -1,91 +1,76 @@
-// The API URL will automatically point to your Render domain
-const API_URL = '/api/jobs';
+const express = require('express');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
-// 1. Fetch and Display Jobs
-async function fetchJobs(category = '') {
-    const jobList = document.getElementById('job-list');
-    jobList.innerHTML = '<p>Loading jobs...</p>';
+const app = express();
 
+// --- 1. MIDDLEWARE ---
+app.use(cors());
+app.use(express.json());
+
+// This line is very important: It serves your index.html, style.css, and script.js 
+// automatically when you open the website URL.
+app.use(express.static(path.join(__dirname, '.')));
+
+// --- 2. DATA INITIALIZATION ---
+const DATA_FILE = path.join(__dirname, 'jobs.json');
+
+// Ensure jobs.json exists so the server doesn't crash on startup
+if (!fs.existsSync(DATA_FILE)) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2));
+}
+
+// --- 3. API ROUTES ---
+
+// GET: Fetch all jobs (or filter by category)
+app.get('/api/jobs', (req, res) => {
     try {
-        // If a category is selected, add it to the URL query
-        const url = category ? `${API_URL}?category=${category}` : API_URL;
+        const data = fs.readFileSync(DATA_FILE, 'utf8');
+        let jobs = JSON.parse(data);
 
-        const response = await fetch(url);
-
-        if (!response.ok) throw new Error('Network response was not ok');
-
-        const jobs = await response.json();
-
-        jobList.innerHTML = ''; // Clear loading message
-
-        if (jobs.length === 0) {
-            jobList.innerHTML = '<p class="no-jobs">No jobs found in this category.</p>';
-            return;
+        const category = req.query.category;
+        if (category) {
+            jobs = jobs.filter(j => j.category.toLowerCase() === category.toLowerCase());
         }
 
-        jobs.forEach(job => {
-            const jobCard = document.createElement('div');
-            jobCard.className = 'job-card';
-            jobCard.innerHTML = `
-                <h3>${job.title}</h3>
-                <p><strong>Company:</strong> ${job.company}</p>
-                <p><strong>Location:</strong> ${job.location}</p>
-                <p><strong>Type:</strong> ${job.type}</p>
-                <span class="category-tag">${job.category}</span>
-            `;
-            jobList.appendChild(jobCard);
-        });
-
+        res.json(jobs);
     } catch (error) {
-        console.error('Error fetching jobs:', error);
-        jobList.innerHTML = `<p class="error">❌ Cannot connect to server. Please try again later.</p>`;
+        console.error("Error reading jobs:", error);
+        res.status(500).json({ error: "Failed to load jobs" });
     }
-}
-
-// 2. Handle Form Submission (Add New Job)
-const jobForm = document.getElementById('job-form');
-if (jobForm) {
-    jobForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = {
-            title: document.getElementById('title').value,
-            company: document.getElementById('company').value,
-            location: document.getElementById('location').value,
-            category: document.getElementById('category').value,
-            type: document.getElementById('type').value
-        };
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
-
-            if (response.ok) {
-                alert('✅ Job posted successfully!');
-                jobForm.reset();
-                fetchJobs(); // Refresh the list
-            } else {
-                alert('❌ Failed to post job.');
-            }
-        } catch (error) {
-            console.error('Error posting job:', error);
-            alert('❌ Server error. Please try again.');
-        }
-    });
-}
-
-// 3. Filter Buttons Logic
-document.querySelectorAll('.filter-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        const category = button.getAttribute('data-category');
-        fetchJobs(category);
-    });
 });
 
-// 4. Initial Load
-document.addEventListener('DOMContentLoaded', () => {
-    fetchJobs();
+// POST: Add a new job
+app.post('/api/jobs', (req, res) => {
+    try {
+        const data = fs.readFileSync(DATA_FILE, 'utf8');
+        const jobs = JSON.parse(data);
+
+        const newJob = {
+            id: Date.now(), // Unique ID based on timestamp
+            title: req.body.title,
+            company: req.body.company,
+            location: req.body.location,
+            category: req.body.category,
+            type: req.body.type
+        };
+
+        jobs.push(newJob);
+        fs.writeFileSync(DATA_FILE, JSON.stringify(jobs, null, 2));
+
+        res.status(201).json(newJob);
+    } catch (error) {
+        console.error("Error saving job:", error);
+        res.status(500).json({ error: "Failed to save job" });
+    }
+});
+
+// --- 4. START SERVER ---
+// We use process.env.PORT because Render tells the server which port to use.
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`✅ Server is running!`);
+    console.log(`🏠 Local: http://localhost:${PORT}`);
 });
