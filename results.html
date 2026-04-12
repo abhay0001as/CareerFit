@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Results | CareerFit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0052cc;
+            --primary-light: #e9f2ff;
+            --dark-navy: #091e42;
+            --accent: #00c7e4;
+            --white: #ffffff;
+            --gray-bg: #f4f5f7;
+            --success: #36b37e;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: var(--gray-bg);
+            color: var(--dark-navy);
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10%;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Results Header */
+        .results-header {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .results-count {
+            font-size: 18px;
+            font-weight: 700;
+            color: #44546f;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Job Card Styling */
+        .job-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #dfe1e6;
+            margin-bottom: 20px;
+            transition: 0.3s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .job-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 30px rgba(0, 82, 204, 0.1);
+        }
+
+        .job-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--dark-navy);
+            margin: 0;
+        }
+
+        .company-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .job-meta {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .meta-tag {
+            background: var(--gray-bg);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #44546f;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .salary-tag {
+            background: #e3fcef;
+            color: #006644;
+        }
+
+        .btn-apply {
+            align-self: flex-start;
+            background: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-apply:hover {
+            background: var(--dark-navy);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #6b778c;
+            margin-bottom: 30px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #8993a4;
+            font-size: 14px;
+        }
+
+        /* Logo Styling */
+.logo { display: flex; align-items: center; text-decoration: none; transition: 0.3s; }
+.logo:hover { opacity: 0.8; transform: scale(1.02); }
+.logo-img { height: 80px; width: auto; }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="CareerFit Logo" class="logo-img">
+            <span style="font-size: 20px; font-weight: 800; color: #0052cc; margin-left: 8px;">CareerFit</span>
+        </a>
+        <a href="search.html" class="btn-back">Modify Search</a>
+    </nav>
+
+    <div class="container">
+        <div class="results-header">
+            <div class="results-count" id="countText">Finding matches...</div>
+        </div>
+
+        <div id="jobList">
+        </div>
+    </div>
+
+    <footer>
+        © 2026 CareerFit Portal • Direct Hiring only
+    </footer>
+
+    <script>
+        window.onload = function () {
+            const rawData = localStorage.getItem('filteredJobs');
+            const jobs = JSON.parse(rawData) || [];
+            const container = document.getElementById('jobList');
+            const countText = document.getElementById('countText');
+
+            if (jobs.length === 0) {
+                countText.innerText = "0 Jobs Found";
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <span class="empty-icon">🔍</span>
+                        <h2>No matches found</h2>
+                        <p>Try searching with a different degree or a broader skill like "IT" or "Sales".</p>
+                        <a href="search.html" class="btn-apply" style="display:inline-block;">Go Back & Try Again</a>
+                    </div>
+                `;
+                return;
+            }
+
+            countText.innerText = `${jobs.length} Verified Jobs Found`;
+
+            container.innerHTML = jobs.map(job => `
+                <div class="job-card">
+                    <div class="company-name">${job.company}</div>
+                    <h2 class="job-title">${job.title}</h2>
+                    
+                    <div class="job-meta">
+                        <div class="meta-tag">🎓 ${job.degree}</div>
+                        <div class="meta-tag">🛠️ ${job.skill}</div>
+                        <div class="meta-tag salary-tag">💰 ${job.salary || 'Competitive'}</div>
+                        <div class="meta-tag">📍 Remote / In-Office</div>
+                    </div>
+
+                    <a href="support.html" class="btn-apply">Get HR Contact</a>
+                </div>
+            `).join('');
+        };
+    </script>
+</body>
+
+</html>

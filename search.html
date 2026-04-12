@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Jobs | CareerFit Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0052cc;
+            --primary-light: #e9f2ff;
+            --dark-navy: #091e42;
+            --accent: #00c7e4;
+            --white: #ffffff;
+            --gray-bg: #f4f5f7;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: var(--gray-bg);
+            color: var(--dark-navy);
+            min-height: 100vh;
+        }
+
+        /* Sticky Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10%;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* Admin Posting Panel */
+        #adminSection {
+            background: #172b4d;
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        /* Search Card */
+        .main-card {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid #dfe1e6;
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #44546f;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #edeff2;
+            border-radius: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background: #f9fbfd;
+            font-family: inherit;
+        }
+
+        .btn-action {
+            width: 100%;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-action:hover {
+            background: #0747a6;
+            transform: translateY(-2px);
+        }
+
+        /* Categories Section */
+        .section-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 25px;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .category-item {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #dfe1e6;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .category-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .category-item span {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .category-item b {
+            font-size: 14px;
+        }
+
+        /* How it Works Section */
+        .how-it-works {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            background: var(--dark-navy);
+            color: white;
+            padding: 40px;
+            border-radius: 24px;
+            margin-bottom: 60px;
+        }
+
+        .step h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            font-size: 14px;
+            color: #a5adba;
+            line-height: 1.5;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid #dfe1e6;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            color: #ff5630;
+            border-color: #ff5630;
+        }
+
+        /* Logo Styling */
+.logo { display: flex; align-items: center; text-decoration: none; transition: 0.3s; }
+.logo:hover { opacity: 0.8; transform: scale(1.02); }
+.logo-img { height: 80px; width: auto; }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="CareerFit Logo" class="logo-img">
+            <span style="font-size: 20px; font-weight: 800; color: #0052cc; margin-left: 8px;">CareerFit</span>
+        </a>
+        <div style="display:flex; align-items:center; gap:15px;">
+            <button id="loginBtn" class="btn-ghost" onclick="adminLogin()">Admin Access</button>
+            <button id="logoutBtn" class="btn-ghost hidden" onclick="logout()" style="color:#ff5630">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div id="adminSection" class="hidden">
+            <h3 style="color:var(--accent); margin-top:0;">Post a New Opening</h3>
+            <div class="admin-grid">
+                <input type="text" id="newTitle" placeholder="Job Role (e.g. Sales Manager)">
+                <input type="text" id="newCompany" placeholder="Company Name">
+                <select id="newDegree">
+                    <option value="Bachelors">Bachelors</option>
+                    <option value="Masters">Masters</option>
+                </select>
+                <input type="text" id="newSalary" placeholder="Salary (e.g. 40,000/Month)">
+            </div>
+            <button onclick="addJob()" class="btn-action"
+                style="background:var(--accent); color:var(--dark-navy); font-size:15px; padding:12px; margin-top:15px;">Publish
+                to Job Board</button>
+        </div>
+
+        <div class="main-card">
+            <h1 style="margin-top:0">Find Your Next Opportunity</h1>
+            <p style="color:#6b778c; margin-bottom:25px;">Search verified jobs matching your qualification.</p>
+
+            <div class="input-group">
+                <div class="form-group">
+                    <label>Minimum Education</label>
+                    <select id="searchDegree">
+                        <option value="Bachelors">Bachelors Degree</option>
+                        <option value="Masters">Masters Degree</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Skill / Keyword</label>
+                    <input type="text" id="searchKeyword" placeholder="e.g. Java, HR, Sales...">
+                </div>
+            </div>
+            <button onclick="searchJobs()" class="btn-action">Search Jobs Now →</button>
+        </div>
+
+        <h2 class="section-title">Explore by Category</h2>
+        <div class="category-grid">
+            <div class="category-item" onclick="categorySearch('IT')"><span>💻</span><b>IT & Software</b></div>
+            <div class="category-item" onclick="categorySearch('Marketing')"><span>📈</span><b>Marketing</b></div>
+            <div class="category-item" onclick="categorySearch('Finance')"><span>💰</span><b>Finance</b></div>
+            <div class="category-item" onclick="categorySearch('Sales')"><span>🤝</span><b>Sales</b></div>
+            <div class="category-item" onclick="categorySearch('HR')"><span>👥</span><b>Human Resource</b></div>
+            <div class="category-item" onclick="categorySearch('Design')"><span>🎨</span><b>Graphic Design</b></div>
+            <div class="category-item" onclick="categorySearch('Admin')"><span>📂</span><b>Office Admin</b></div>
+
+            <div class="category-item" onclick="window.location.href='support.html'"
+                style="border-color: var(--accent);">
+                <span>🎧</span><b>Customer Care</b>
+            </div>
+        </div>
+
+        <h2 class="section-title">How CareerFit Works</h2>
+        <div class="how-it-works">
+            <div class="step">
+                <h4>1. Filter</h4>
+                <p>Select your degree and skills to see matching jobs.</p>
+            </div>
+            <div class="step">
+                <h4>2. Verify</h4>
+                <p>Every post is 100% verified by our expert team.</p>
+            </div>
+            <div class="step">
+                <h4>3. Apply</h4>
+                <p>Contact HR directly. No middlemen, no consultancy fees.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api/jobs';
+
+        // Direct Category Search
+        async function categorySearch(catName) {
+            document.getElementById('searchKeyword').value = catName;
+            await searchJobs();
+        }
+
+        // Main Search Logic
+        async function searchJobs() {
+            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+            const degree = document.getElementById('searchDegree').value;
+
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('API request failed');
+
+                const jobs = await res.json();
+
+                const matches = jobs.filter(j => {
+                    const matchDegree = (j.degree === degree);
+                    const matchKeyword = (keyword === "" ||
+                        j.skill.toLowerCase().includes(keyword) ||
+                        j.title.toLowerCase().includes(keyword));
+                    return matchDegree && matchKeyword;
+                });
+
+                localStorage.setItem('filteredJobs', JSON.stringify(matches));
+                window.location.href = 'results.html';
+            } catch (e) {
+                alert("Cannot connect to server. Please ensure 'node server.js' is running!");
+            }
+        }
+
+        // Admin Security Functions
+        function adminLogin() {
+            const pass = prompt("Enter Admin Key:");
+            if (pass === "admin123") {
+                localStorage.setItem('isAdmin', 'true');
+                location.reload();
+            } else if (pass !== null) {
+                alert("Wrong password!");
+            }
+        }
+
+        function logout() {
+            localStorage.setItem('isAdmin', 'false');
+            location.reload();
+        }
+
+        // Initialize Page State
+        window.onload = function () {
+            if (localStorage.getItem('isAdmin') === 'true') {
+                const adminDiv = document.getElementById('adminSection');
+                const logoutBtn = document.getElementById('logoutBtn');
+                const loginBtn = document.getElementById('loginBtn');
+
+                if (adminDiv) adminDiv.classList.remove('hidden');
+                if (logoutBtn) logoutBtn.classList.remove('hidden');
+                if (loginBtn) loginBtn.classList.add('hidden');
+            }
+        };
+
+        // Post Job Function
+        async function addJob() {
+            const data = {
+                title: document.getElementById('newTitle').value,
+                company: document.getElementById('newCompany').value,
+                degree: document.getElementById('newDegree').value,
+                skill: "General",
+                salary: document.getElementById('newSalary').value,
+                type: "Full-Time"
+            };
+
+            if (!data.title || !data.company) {
+                alert("Designation and Company name are mandatory.");
+                return;
+            }
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (res.ok) {
+                    alert("Job Published successfully!");
+                    location.reload();
+                }
+            } catch (e) {
+                alert("Error connecting to server.");
+            }
+        }
+    </script>
+</body>
+
+</html>
