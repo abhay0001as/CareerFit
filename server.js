@@ -1,79 +1,91 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const fs = require('fs');
+// The API URL will automatically point to your Render domain
+const API_URL = '/api/jobs';
 
-const app = express();
+// 1. Fetch and Display Jobs
+async function fetchJobs(category = '') {
+    const jobList = document.getElementById('job-list');
+    jobList.innerHTML = '<p>Loading jobs...</p>';
 
-// --- 1. MIDDLEWARE ---
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname)));
-
-// --- 2. LOCAL DATA STORAGE ---
-// Instead of MongoDB, we use a simple JSON file
-const DATA_FILE = path.join(__dirname, 'jobs.json');
-
-// Initialize the file if it doesn't exist
-if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify([]));
-}
-
-// Helper functions to read/write data
-const getJobsFromFile = () => JSON.parse(fs.readFileSync(DATA_FILE));
-const saveJobsToFile = (jobs) => fs.writeFileSync(DATA_FILE, JSON.stringify(jobs, null, 2));
-
-// --- 3. API ROUTES ---
-
-// Get all jobs
-app.get('/api/jobs', (req, res) => {
     try {
-        const jobs = getJobsFromFile();
-        const { category } = req.query;
+        // If a category is selected, add it to the URL query
+        const url = category ? `${API_URL}?category=${category}` : API_URL;
 
-        if (category) {
-            const filteredJobs = jobs.filter(j => j.category === category);
-            return res.json(filteredJobs);
+        const response = await fetch(url);
+
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const jobs = await response.json();
+
+        jobList.innerHTML = ''; // Clear loading message
+
+        if (jobs.length === 0) {
+            jobList.innerHTML = '<p class="no-jobs">No jobs found in this category.</p>';
+            return;
         }
 
-        res.json(jobs);
-    } catch (err) {
-        res.status(500).json({ error: "Could not read data" });
-    }
-});
+        jobs.forEach(job => {
+            const jobCard = document.createElement('div');
+            jobCard.className = 'job-card';
+            jobCard.innerHTML = `
+                <h3>${job.title}</h3>
+                <p><strong>Company:</strong> ${job.company}</p>
+                <p><strong>Location:</strong> ${job.location}</p>
+                <p><strong>Type:</strong> ${job.type}</p>
+                <span class="category-tag">${job.category}</span>
+            `;
+            jobList.appendChild(jobCard);
+        });
 
-// Add a new job
-app.post('/api/jobs', (req, res) => {
-    try {
-        const jobs = getJobsFromFile();
-        const newJob = {
-            id: Date.now(), // Generate a simple ID
-            ...req.body,
-            posted: new Date().toISOString()
+    } catch (error) {
+        console.error('Error fetching jobs:', error);
+        jobList.innerHTML = `<p class="error">❌ Cannot connect to server. Please try again later.</p>`;
+    }
+}
+
+// 2. Handle Form Submission (Add New Job)
+const jobForm = document.getElementById('job-form');
+if (jobForm) {
+    jobForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = {
+            title: document.getElementById('title').value,
+            company: document.getElementById('company').value,
+            location: document.getElementById('location').value,
+            category: document.getElementById('category').value,
+            type: document.getElementById('type').value
         };
 
-        jobs.push(newJob);
-        saveJobsToFile(jobs);
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
 
-        res.status(201).json(newJob);
-    } catch (err) {
-        res.status(400).json({ error: "Could not save job" });
-    }
+            if (response.ok) {
+                alert('✅ Job posted successfully!');
+                jobForm.reset();
+                fetchJobs(); // Refresh the list
+            } else {
+                alert('❌ Failed to post job.');
+            }
+        } catch (error) {
+            console.error('Error posting job:', error);
+            alert('❌ Server error. Please try again.');
+        }
+    });
+}
+
+// 3. Filter Buttons Logic
+document.querySelectorAll('.filter-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const category = button.getAttribute('data-category');
+        fetchJobs(category);
+    });
 });
 
-// Root route
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// --- 4. START SERVER ---
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`
-    ===========================================
-    🚀 CareerFit is LIVE (Offline-Data Mode)
-    🌐 URL: http://localhost:${PORT}
-    
-    ===========================================
-    `);
+// 4. Initial Load
+document.addEventListener('DOMContentLoaded', () => {
+    fetchJobs();
 });
