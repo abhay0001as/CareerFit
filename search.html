@@ -25,7 +25,6 @@
             min-height: 100vh;
         }
 
-        /* Sticky Navigation */
         nav {
             display: flex;
             justify-content: space-between;
@@ -39,10 +38,20 @@
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--primary);
+            display: flex;
+            align-items: center;
             text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .logo:hover {
+            opacity: 0.8;
+            transform: scale(1.02);
+        }
+
+        .logo-img {
+            height: 50px;
+            width: auto;
         }
 
         .container {
@@ -51,7 +60,6 @@
             padding: 0 20px;
         }
 
-        /* Admin Posting Panel */
         #adminSection {
             background: #172b4d;
             color: white;
@@ -67,7 +75,6 @@
             margin-top: 15px;
         }
 
-        /* Search Card */
         .main-card {
             background: var(--white);
             padding: 40px;
@@ -123,7 +130,6 @@
             transform: translateY(-2px);
         }
 
-        /* Categories Section */
         .section-title {
             font-size: 22px;
             font-weight: 800;
@@ -159,11 +165,6 @@
             margin-bottom: 10px;
         }
 
-        .category-item b {
-            font-size: 14px;
-        }
-
-        /* How it Works Section */
         .how-it-works {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -180,13 +181,6 @@
             margin-bottom: 10px;
         }
 
-        .step p {
-            font-size: 14px;
-            color: #a5adba;
-            line-height: 1.5;
-        }
-
-        /* Utility Classes */
         .hidden {
             display: none;
         }
@@ -199,29 +193,6 @@
             cursor: pointer;
             font-family: inherit;
             font-weight: 600;
-        }
-
-        .btn-logout {
-            color: #ff5630;
-            border-color: #ff5630;
-        }
-
-        /* Logo Styling */
-        .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .logo:hover {
-            opacity: 0.8;
-            transform: scale(1.02);
-        }
-
-        .logo-img {
-            height: 80px;
-            width: auto;
         }
     </style>
 </head>
@@ -286,10 +257,7 @@
             <div class="category-item" onclick="categorySearch('HR')"><span>👥</span><b>Human Resource</b></div>
             <div class="category-item" onclick="categorySearch('Design')"><span>🎨</span><b>Graphic Design</b></div>
             <div class="category-item" onclick="categorySearch('Admin')"><span>📂</span><b>Office Admin</b></div>
-
-            <div class="category-item" onclick="window.location.href='support.html'"
-                style="border-color: var(--accent);">
-                <span>🎧</span><b>Customer Care</b>
+            <div class="category-item" onclick="categorySearch('Customer Care')"><span>🎧</span><b>Customer Care</b>
             </div>
         </div>
 
@@ -311,41 +279,48 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000/api/jobs';
+        // FIXED: Using relative path for Render
+        const API_URL = '/api/jobs';
 
-        // Direct Category Search
         async function categorySearch(catName) {
             document.getElementById('searchKeyword').value = catName;
             await searchJobs();
         }
 
-        // Main Search Logic
         async function searchJobs() {
             const keyword = document.getElementById('searchKeyword').value.toLowerCase();
             const degree = document.getElementById('searchDegree').value;
 
             try {
-                const response = await fetch('/api/jobs');
-                if (!res.ok) throw new Error('API request failed');
+                const response = await fetch(API_URL);
 
-                const jobs = await res.json();
+                // FIXED: matched variable name 'response'
+                if (!response.ok) throw new Error('API request failed');
+
+                const jobs = await response.json();
 
                 const matches = jobs.filter(j => {
                     const matchDegree = (j.degree === degree);
+
+                    // Safely handle missing data
+                    const jobSkill = j.skill ? j.skill.toLowerCase() : "";
+                    const jobTitle = j.title ? j.title.toLowerCase() : "";
+
                     const matchKeyword = (keyword === "" ||
-                        j.skill.toLowerCase().includes(keyword) ||
-                        j.title.toLowerCase().includes(keyword));
+                        jobSkill.includes(keyword) ||
+                        jobTitle.includes(keyword));
+
                     return matchDegree && matchKeyword;
                 });
 
                 localStorage.setItem('filteredJobs', JSON.stringify(matches));
                 window.location.href = 'results.html';
             } catch (e) {
-                alert("Cannot connect to server. Please ensure 'node server.js' is running!");
+                console.error(e);
+                alert("Cannot connect to server. Ensure your Render deployment is live!");
             }
         }
 
-        // Admin Security Functions
         function adminLogin() {
             const pass = prompt("Enter Admin Key:");
             if (pass === "admin123") {
@@ -361,7 +336,6 @@
             location.reload();
         }
 
-        // Initialize Page State
         window.onload = function () {
             if (localStorage.getItem('isAdmin') === 'true') {
                 const adminDiv = document.getElementById('adminSection');
@@ -374,7 +348,6 @@
             }
         };
 
-        // Post Job Function
         async function addJob() {
             const data = {
                 title: document.getElementById('newTitle').value,
