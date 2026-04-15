@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard | CareerFit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0052cc;
+            --dark-navy: #091e42;
+            --bg: #f4f5f7;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px 10%;
+        }
+
+        .welcome-section {
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(9, 30, 66, 0.05);
+            border: 1px solid #dfe1e6;
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            color: #6b778c;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .stat-card p {
+            margin: 10px 0 0;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--dark-navy);
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid #dfe1e6;
+        }
+
+        .btn-logout {
+            background: #ff5630;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-logout:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="header-placeholder"></div>
+
+    <div class="main-content">
+        <div class="welcome-section">
+            <h1 id="welcomeUser">Welcome back!</h1>
+            <p style="color: #6b778c;">Manage your applications and account settings here.</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Profile Status</h3>
+                <p>100% Complete</p>
+            </div>
+            <div class="stat-card">
+                <h3>Saved Jobs</h3>
+                <p id="savedCount">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Applications</h3>
+                <p>12</p>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h2>Account Actions</h2>
+            <hr style="border: 0; border-top: 1px solid #dfe1e6; margin: 20px 0;">
+            <p>You are currently logged in as a verified user.</p>
+            <button class="btn-logout" onclick="logoutAction()">Sign Out of CareerFit</button>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js"></script>
+
+    <script>
+        // Security Check & Data Loading
+        window.onload = function () {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn !== 'true') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Update UI with local data
+            const lastSearch = localStorage.getItem('lastSearch') || "None";
+            const filteredJobs = JSON.parse(localStorage.getItem('filteredJobs') || "[]");
+            document.getElementById('savedCount').innerText = filteredJobs.length;
+        };
+
+        function logoutAction() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>
