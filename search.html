@@ -17,41 +17,20 @@
             --gray-bg: #f4f5f7;
         }
 
+        /* NEW: Ensures sticky footer behavior */
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             margin: 0;
             background: var(--gray-bg);
             color: var(--dark-navy);
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
 
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 10%;
-            background: #fff;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .logo:hover {
-            opacity: 0.8;
-            transform: scale(1.02);
-        }
-
-        .logo-img {
-            height: 50px;
-            width: auto;
+        /* NEW: Wrapper for the main page content */
+        .main-content-wrapper {
+            flex: 1;
         }
 
         .container {
@@ -185,6 +164,13 @@
             display: none;
         }
 
+        /* Style for the Admin Button placed inside main container now */
+        .admin-access-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
         .btn-ghost {
             background: transparent;
             border: 1px solid #dfe1e6;
@@ -199,197 +185,183 @@
 
 <body>
 
-    <nav>
-        <a href="index.html" class="logo">
-            <img src="logo.png" alt="CareerFit Logo" class="logo-img">
-            <span style="font-size: 20px; font-weight: 800; color: #0052cc; margin-left: 8px;">CareerFit</span>
-        </a>
-        <div style="display:flex; align-items:center; gap:15px;">
-            <button id="loginBtn" class="btn-ghost" onclick="adminLogin()">Admin Access</button>
-            <button id="logoutBtn" class="btn-ghost hidden" onclick="logout()" style="color:#ff5630">Logout</button>
-        </div>
-    </nav>
+    <div id="header-placeholder"></div>
 
-    <div class="container">
+    <div class="main-content-wrapper">
+        <div class="container">
 
-        <div id="adminSection" class="hidden">
-            <h3 style="color:var(--accent); margin-top:0;">Post a New Opening</h3>
-            <div class="admin-grid">
-                <input type="text" id="newTitle" placeholder="Job Role (e.g. Sales Manager)">
-                <input type="text" id="newCompany" placeholder="Company Name">
-                <select id="newDegree">
-                    <option value="Bachelors">Bachelors</option>
-                    <option value="Masters">Masters</option>
-                </select>
-                <input type="text" id="newSalary" placeholder="Salary (e.g. 40,000/Month)">
+            <div class="admin-access-bar">
+                <button id="loginBtn" class="btn-ghost" onclick="adminLogin()">Admin Access</button>
+                <button id="logoutBtn" class="btn-ghost hidden" onclick="logout()" style="color:#ff5630">Logout</button>
             </div>
-            <button onclick="addJob()" class="btn-action"
-                style="background:var(--accent); color:var(--dark-navy); font-size:15px; padding:12px; margin-top:15px;">Publish
-                to Job Board</button>
-        </div>
 
-        <div class="main-card">
-            <h1 style="margin-top:0">Find Your Next Opportunity</h1>
-            <p style="color:#6b778c; margin-bottom:25px;">Search verified jobs matching your qualification.</p>
-
-            <div class="input-group">
-                <div class="form-group">
-                    <label>Minimum Education</label>
-                    <select id="searchDegree">
-                        <option value="Bachelors">Bachelors Degree</option>
-                        <option value="Masters">Masters Degree</option>
+            <div id="adminSection" class="hidden">
+                <h3 style="color:var(--accent); margin-top:0;">Post a New Opening</h3>
+                <div class="admin-grid">
+                    <input type="text" id="newTitle" placeholder="Job Role (e.g. Sales Manager)">
+                    <input type="text" id="newCompany" placeholder="Company Name">
+                    <select id="newDegree">
+                        <option value="Bachelors">Bachelors</option>
+                        <option value="Masters">Masters</option>
                     </select>
+                    <input type="text" id="newSalary" placeholder="Salary (e.g. 40,000/Month)">
                 </div>
-                <div class="form-group">
-                    <label>Preferred Skill / Keyword</label>
-                    <input type="text" id="searchKeyword" placeholder="e.g. Java, HR, Sales...">
+                <button onclick="addJob()" class="btn-action"
+                    style="background:var(--accent); color:var(--dark-navy); font-size:15px; padding:12px; margin-top:15px;">Publish
+                    to Job Board</button>
+            </div>
+
+            <div class="main-card">
+                <h1 style="margin-top:0">Find Your Next Opportunity</h1>
+                <p style="color:#6b778c; margin-bottom:25px;">Search verified jobs matching your qualification.</p>
+
+                <div class="input-group">
+                    <div class="form-group">
+                        <label>Minimum Education</label>
+                        <select id="searchDegree">
+                            <option value="Bachelors">Bachelors Degree</option>
+                            <option value="Masters">Masters Degree</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Skill / Keyword</label>
+                        <input type="text" id="searchKeyword" placeholder="e.g. Java, HR, Sales...">
+                    </div>
+                </div>
+                <button onclick="searchJobs()" class="btn-action">Search Jobs Now →</button>
+            </div>
+
+            <h2 class="section-title">Explore by Category</h2>
+            <div class="category-grid">
+                <div class="category-item" onclick="categorySearch('IT')"><span>💻</span><b>IT & Software</b></div>
+                <div class="category-item" onclick="categorySearch('Marketing')"><span>📈</span><b>Marketing</b></div>
+                <div class="category-item" onclick="categorySearch('Finance')"><span>💰</span><b>Finance</b></div>
+                <div class="category-item" onclick="categorySearch('Sales')"><span>🤝</span><b>Sales</b></div>
+                <div class="category-item" onclick="categorySearch('HR')"><span>👥</span><b>Human Resource</b></div>
+                <div class="category-item" onclick="categorySearch('Design')"><span>🎨</span><b>Graphic Design</b></div>
+                <div class="category-item" onclick="categorySearch('Admin')"><span>📂</span><b>Office Admin</b></div>
+                <div class="category-item" onclick="categorySearch('Customer Care')"><span>🎧</span><b>Customer Care</b>
                 </div>
             </div>
-            <button onclick="searchJobs()" class="btn-action">Search Jobs Now →</button>
-        </div>
 
-        <h2 class="section-title">Explore by Category</h2>
-        <div class="category-grid">
-            <div class="category-item" onclick="categorySearch('IT')"><span>💻</span><b>IT & Software</b></div>
-            <div class="category-item" onclick="categorySearch('Marketing')"><span>📈</span><b>Marketing</b></div>
-            <div class="category-item" onclick="categorySearch('Finance')"><span>💰</span><b>Finance</b></div>
-            <div class="category-item" onclick="categorySearch('Sales')"><span>🤝</span><b>Sales</b></div>
-            <div class="category-item" onclick="categorySearch('HR')"><span>👥</span><b>Human Resource</b></div>
-            <div class="category-item" onclick="categorySearch('Design')"><span>🎨</span><b>Graphic Design</b></div>
-            <div class="category-item" onclick="categorySearch('Admin')"><span>📂</span><b>Office Admin</b></div>
-            <div class="category-item" onclick="categorySearch('Customer Care')"><span>🎧</span><b>Customer Care</b>
-            </div>
-        </div>
-
-        <h2 class="section-title">How CareerFit Works</h2>
-        <div class="how-it-works">
-            <div class="step">
-                <h4>1. Filter</h4>
-                <p>Select your degree and skills to see matching jobs.</p>
-            </div>
-            <div class="step">
-                <h4>2. Verify</h4>
-                <p>Every post is 100% verified by our expert team.</p>
-            </div>
-            <div class="step">
-                <h4>3. Apply</h4>
-                <p>Contact HR directly. No middlemen, no consultancy fees.</p>
+            <h2 class="section-title">How CareerFit Works</h2>
+            <div class="how-it-works">
+                <div class="step">
+                    <h4>1. Filter</h4>
+                    <p>Select your degree and skills to see matching jobs.</p>
+                </div>
+                <div class="step">
+                    <h4>2. Verify</h4>
+                    <p>Every post is 100% verified by our expert team.</p>
+                </div>
+                <div class="step">
+                    <h4>3. Apply</h4>
+                    <p>Contact HR directly. No middlemen, no consultancy fees.</p>
+                </div>
             </div>
         </div>
     </div>
 
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js"></script>
+
     <script>
-        
-    // 1. LOGIN PROTECTION: This runs immediately when the page loads
-                window.onload = function () {
-                        // 1. Check if the user is logged in
-                        const isLoggedIn = localStorage.getItem('isLoggedIn');
+        // Your logic remains the same
+        window.onload = function () {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn !== 'true') {
+                window.location.href = 'login.html';
+                return;
+            }
 
-                        // 2. If NOT logged in, redirect to login.html immediately
-                        if (isLoggedIn !== 'true') {
-                            window.location.href = 'login.html';
-                            return; // This stops the rest of the page from loading
-                        }
-
-                // 2. ADMIN PANEL CHECK: Shows hidden buttons if admin is logged in
-                if (localStorage.getItem('isAdmin') === 'true') {
-            const adminDiv = document.getElementById('adminSection');
+            if (localStorage.getItem('isAdmin') === 'true') {
+                const adminDiv = document.getElementById('adminSection');
                 const logoutBtn = document.getElementById('logoutBtn');
                 const loginBtn = document.getElementById('loginBtn');
 
                 if (adminDiv) adminDiv.classList.remove('hidden');
                 if (logoutBtn) logoutBtn.classList.remove('hidden');
                 if (loginBtn) loginBtn.classList.add('hidden');
+            }
+        };
+
+        const API_URL = '/api/jobs';
+
+        async function categorySearch(catName) {
+            document.getElementById('searchKeyword').value = catName;
+            await searchJobs();
         }
-    };
 
-                // 3. MAIN API SETTINGS
-                const API_URL = '/api/jobs';
+        async function searchJobs() {
+            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+            const degree = document.getElementById('searchDegree').value;
 
-                // 4. CATEGORY SEARCH FUNCTION
-                async function categorySearch(catName) {
-                    document.getElementById('searchKeyword').value = catName;
-                await searchJobs();
-    }
-
-                // 5. MAIN SEARCH LOGIC
-                async function searchJobs() {
-        const keyword = document.getElementById('searchKeyword').value.toLowerCase();
-                const degree = document.getElementById('searchDegree').value;
-
-                try {
-            const response = await fetch(API_URL);
+            try {
+                const response = await fetch(API_URL);
                 if (!response.ok) throw new Error('API request failed');
-
                 const jobs = await response.json();
 
-            const matches = jobs.filter(j => {
-                const matchDegree = (j.degree === degree);
-                const jobSkill = j.skill ? j.skill.toLowerCase() : "";
-                const jobTitle = j.title ? j.title.toLowerCase() : "";
-
-                const matchKeyword = (keyword === "" ||
-                jobSkill.includes(keyword) ||
-                jobTitle.includes(keyword));
-                return matchDegree && matchKeyword;
-            });
+                const matches = jobs.filter(j => {
+                    const matchDegree = (j.degree === degree);
+                    const jobSkill = j.skill ? j.skill.toLowerCase() : "";
+                    const jobTitle = j.title ? j.title.toLowerCase() : "";
+                    const matchKeyword = (keyword === "" || jobSkill.includes(keyword) || jobTitle.includes(keyword));
+                    return matchDegree && matchKeyword;
+                });
 
                 localStorage.setItem('filteredJobs', JSON.stringify(matches));
                 window.location.href = 'results.html';
-        } catch (e) {
-                    console.error(e);
+            } catch (e) {
+                console.error(e);
                 alert("Connection error. Ensure your server is running!");
+            }
         }
-    }
 
-                // 6. ADMIN FUNCTIONS
-                function adminLogin() {
-        const pass = prompt("Enter Admin Key:");
-                if (pass === "admin123") {
-                    localStorage.setItem('isAdmin', 'true');
+        function adminLogin() {
+            const pass = prompt("Enter Admin Key:");
+            if (pass === "admin123") {
+                localStorage.setItem('isAdmin', 'true');
                 location.reload();
-        } else if (pass !== null) {
-                    alert("Wrong password!");
+            } else if (pass !== null) {
+                alert("Wrong password!");
+            }
         }
-    }
 
-                function logout() {
-                    // Clear everything and go back to home
-                    localStorage.clear();
-                window.location.href = 'index.html';
-    }
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
 
-                // 7. POST JOB FUNCTION (ADMIN ONLY)
-                async function addJob() {
-        const data = {
-                    title: document.getElementById('newTitle').value,
+        async function addJob() {
+            const data = {
+                title: document.getElementById('newTitle').value,
                 company: document.getElementById('newCompany').value,
                 degree: document.getElementById('newDegree').value,
                 skill: "General",
                 salary: document.getElementById('newSalary').value,
                 type: "Full-Time"
-        };
+            };
 
-                if (!data.title || !data.company) {
-                    alert("Designation and Company name are mandatory.");
+            if (!data.title || !data.company) {
+                alert("Designation and Company name are mandatory.");
                 return;
-        }
+            }
 
-                try {
-            const res = await fetch(API_URL, {
+            try {
+                const res = await fetch(API_URL, {
                     method: 'POST',
-                headers: {'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
                 if (res.ok) {
                     alert("Job Published successfully!");
-                location.reload();
+                    location.reload();
+                }
+            } catch (e) {
+                alert("Error connecting to server.");
             }
-        } catch (e) {
-                    alert("Error connecting to server.");
         }
-    }
-        
     </script>
 </body>
 

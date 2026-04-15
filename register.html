@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | CareerFit</title>
+    <title>Candidate Login | CareerFit</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
         rel="stylesheet">
     <style>
@@ -13,23 +13,78 @@
             --dark: #091e42;
         }
 
+        /* Essential for sticky footer */
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: #f4f5f7;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Pushes footer down and centers the card */
+        .main-content {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            padding: 40px 20px;
         }
 
-        .card {
+        .login-card {
             background: white;
             padding: 40px;
             border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 400px;
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-area h2 {
+            color: var(--primary);
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f0f2f5;
+            padding: 5px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            color: #6b778c;
+            transition: 0.3s;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
         }
 
         input {
@@ -39,9 +94,15 @@
             border: 2px solid #edeff2;
             border-radius: 12px;
             box-sizing: border-box;
+            font-size: 16px;
+            outline: none;
         }
 
-        .btn {
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-login {
             width: 100%;
             background: var(--primary);
             color: white;
@@ -49,37 +110,112 @@
             padding: 16px;
             border-radius: 12px;
             font-weight: 800;
+            font-size: 16px;
             cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #0747a6;
+            transform: translateY(-2px);
+        }
+
+        .footer-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #6b778c;
+        }
+
+        .footer-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
         }
     </style>
 </head>
 
 <body>
-    <div class="card">
-        <h2>Create Account</h2>
-        <input type="text" id="regName" placeholder="Full Name">
-        <input type="email" id="regEmail" placeholder="Email Address">
-        <input type="password" id="regPass" placeholder="Create Password">
-        <button onclick="handleRegister()" class="btn">Create Account</button>
-        <p style="text-align:center; font-size:14px; margin-top:20px;">
-            Already have an account? <a href="login.html" style="color:var(--primary); text-decoration:none;">Login</a>
-        </p>
+    <div id="header-placeholder"></div>
+
+    <div class="main-content">
+        <div class="login-card">
+            <div class="logo-area">
+                <h2>CareerFit</h2>
+                <p style="color: #6b778c; font-size: 14px;">Login to find your dream job</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('mobile', event)">Mobile Number</button>
+                <button class="tab" onclick="switchTab('email', event)">Email ID</button>
+            </div>
+
+            <div id="mobileSection" class="form-section active">
+                <input type="tel" id="userMobile" placeholder="Enter Mobile Number">
+                <button onclick="handleLogin('mobile')" class="btn-login">Login with OTP</button>
+            </div>
+
+            <div id="emailSection" class="form-section">
+                <input type="email" id="userEmail" placeholder="Enter Email Address">
+                <input type="password" id="userPass" placeholder="Enter Password">
+                <button onclick="handleLogin('email')" class="btn-login">Login with Password</button>
+            </div>
+
+            <div class="footer-link">
+                New here? <a href="register.html">Register for Free</a>
+            </div>
+        </div>
     </div>
 
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js"></script>
+
     <script>
-        async function handleRegister() {
-            const user = {
-                name: document.getElementById('regName').value,
-                email: document.getElementById('regEmail').value,
-                pass: document.getElementById('regPass').value
-            };
+        let generatedMockOTP = null;
 
-            if (!user.name || !user.email || !user.pass) return alert("Fill all fields");
+        function switchTab(type, e) {
+            // Updated to handle 'e' (event) more reliably
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            if (e && e.target) e.target.classList.add('active');
 
-            // In a real app, you'd fetch('/api/register', { method: 'POST', ... })
-            // For now, let's simulate success
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+
+            if (type === 'mobile') {
+                document.getElementById('mobileSection').classList.add('active');
+            } else {
+                document.getElementById('emailSection').classList.add('active');
+            }
+        }
+
+        async function handleLogin(type) {
+            if (type === 'mobile') {
+                const mobile = document.getElementById('userMobile').value;
+                if (mobile.length < 10) {
+                    alert("Please enter a valid 10-digit number");
+                    return;
+                }
+                generatedMockOTP = "1234";
+                const enteredOTP = prompt("A mock OTP has been 'sent' to " + mobile + ".\n\nEnter OTP (Hint: 1234):");
+                if (enteredOTP === generatedMockOTP) {
+                    completeLogin();
+                } else {
+                    alert("Invalid OTP! Try again.");
+                }
+            } else {
+                const email = document.getElementById('userEmail').value;
+                const pass = document.getElementById('userPass').value;
+                if (email && pass) {
+                    completeLogin();
+                } else {
+                    alert("Enter Email and Password");
+                }
+            }
+        }
+
+        function completeLogin() {
             localStorage.setItem('isLoggedIn', 'true');
-            alert("Account Created Successfully!");
+            alert("Login Successful!");
             window.location.href = 'search.html';
         }
     </script>

@@ -13,14 +13,24 @@
             --dark: #091e42;
         }
 
+        /* UPDATED BODY: Stacks header, content, and footer vertically */
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: #f4f5f7;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            /* Ensures footer stays at bottom */
+        }
+
+        /* NEW WRAPPER: Centers the card in the middle space */
+        .main-content {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            padding: 40px 20px;
         }
 
         .login-card {
@@ -43,7 +53,6 @@
             margin: 0;
         }
 
-        /* Tab Switcher */
         .tabs {
             display: flex;
             background: #f0f2f5;
@@ -128,40 +137,47 @@
 </head>
 
 <body>
+    <div id="header-placeholder"></div>
 
-    <div class="login-card">
-        <div class="logo-area">
-            <h2>CareerFit</h2>
-            <p style="color: #6b778c; font-size: 14px;">Login to find your dream job</p>
-        </div>
+    <div class="main-content">
+        <div class="login-card">
+            <div class="logo-area">
+                <h2>CareerFit</h2>
+                <p style="color: #6b778c; font-size: 14px;">Login to find your dream job</p>
+            </div>
 
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('mobile')">Mobile Number</button>
-            <button class="tab" onclick="switchTab('email')">Email ID</button>
-        </div>
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('mobile')">Mobile Number</button>
+                <button class="tab" onclick="switchTab('email')">Email ID</button>
+            </div>
 
-        <div id="mobileSection" class="form-section active">
-            <input type="tel" id="userMobile" placeholder="Enter Mobile Number">
-            <button onclick="handleLogin('mobile')" class="btn-login">Login with OTP</button>
-        </div>
+            <div id="mobileSection" class="form-section active">
+                <input type="tel" id="userMobile" placeholder="Enter Mobile Number">
+                <button onclick="handleLogin('mobile')" class="btn-login">Login with OTP</button>
+            </div>
 
-        <div id="emailSection" class="form-section">
-            <input type="email" id="userEmail" placeholder="Enter Email Address">
-            <input type="password" id="userPass" placeholder="Enter Password">
-            <button onclick="handleLogin('email')" class="btn-login">Login with Password</button>
-        </div>
+            <div id="emailSection" class="form-section">
+                <input type="email" id="userEmail" placeholder="Enter Email Address">
+                <input type="password" id="userPass" placeholder="Enter Password">
+                <button onclick="handleLogin('email')" class="btn-login">Login with Password</button>
+            </div>
 
-        <div class="footer-link">
-            New here? <a href="register.html">Register for Free</a>
+            <div class="footer-link">
+                New here? <a href="register.html">Register for Free</a>
+            </div>
         </div>
     </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="components.js"></script>
 
     <script>
         let generatedMockOTP = null;
 
         function switchTab(type) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event) event.target.classList.add('active');
             document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
 
             if (type === 'mobile') {
@@ -174,24 +190,18 @@
         async function handleLogin(type) {
             if (type === 'mobile') {
                 const mobile = document.getElementById('userMobile').value;
-
                 if (mobile.length < 10) {
                     alert("Please enter a valid 10-digit number");
                     return;
                 }
-
-                // SIMULATING SENDING OTP
-                generatedMockOTP = "1234"; // We'll use a fixed code for your demo
+                generatedMockOTP = "1234";
                 const enteredOTP = prompt("A mock OTP has been 'sent' to " + mobile + ".\n\nEnter OTP (Hint: 1234):");
-
                 if (enteredOTP === generatedMockOTP) {
                     completeLogin();
                 } else {
                     alert("Invalid OTP! Try again.");
                 }
-
             } else {
-                // Email/Password Logic
                 const email = document.getElementById('userEmail').value;
                 const pass = document.getElementById('userPass').value;
                 if (email && pass) {
@@ -207,6 +217,11 @@
             alert("Login Successful!");
             window.location.href = 'search.html';
         }
+        // Hide the login button in the header if we are already on the login page
+            document.addEventListener('DOMContentLoaded', () => {
+                const navBtn = document.querySelector('nav button');
+                if (navBtn) navBtn.style.display = 'none';
+            });
     </script>
 
 </body>
