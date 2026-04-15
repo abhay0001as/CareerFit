@@ -152,19 +152,18 @@
         </div>
 
         <div class="footer-link">
-            New here? <a href="#">Register for Free</a>
+            New here? <a href="register.html">Register for Free</a>
         </div>
     </div>
 
     <script>
-        // Tab switching logic
+        let generatedMockOTP = null;
+
         function switchTab(type) {
-            // Update tabs
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-
-            // Update sections
             document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+
             if (type === 'mobile') {
                 document.getElementById('mobileSection').classList.add('active');
             } else {
@@ -172,24 +171,38 @@
             }
         }
 
-        // Login logic
-        function handleLogin(type) {
+        async function handleLogin(type) {
             if (type === 'mobile') {
                 const mobile = document.getElementById('userMobile').value;
+
                 if (mobile.length < 10) {
-                    alert("Please enter a valid 10-digit mobile number");
+                    alert("Please enter a valid 10-digit number");
                     return;
                 }
+
+                // SIMULATING SENDING OTP
+                generatedMockOTP = "1234"; // We'll use a fixed code for your demo
+                const enteredOTP = prompt("A mock OTP has been 'sent' to " + mobile + ".\n\nEnter OTP (Hint: 1234):");
+
+                if (enteredOTP === generatedMockOTP) {
+                    completeLogin();
+                } else {
+                    alert("Invalid OTP! Try again.");
+                }
+
             } else {
+                // Email/Password Logic
                 const email = document.getElementById('userEmail').value;
                 const pass = document.getElementById('userPass').value;
-                if (!email || !pass) {
-                    alert("Please fill in both Email and Password");
-                    return;
+                if (email && pass) {
+                    completeLogin();
+                } else {
+                    alert("Enter Email and Password");
                 }
             }
+        }
 
-            // Save session
+        function completeLogin() {
             localStorage.setItem('isLoggedIn', 'true');
             alert("Login Successful!");
             window.location.href = 'search.html';

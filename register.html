@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | CareerFit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0052cc;
+            --dark: #091e42;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f4f5f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 2px solid #edeff2;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h2>Create Account</h2>
+        <input type="text" id="regName" placeholder="Full Name">
+        <input type="email" id="regEmail" placeholder="Email Address">
+        <input type="password" id="regPass" placeholder="Create Password">
+        <button onclick="handleRegister()" class="btn">Create Account</button>
+        <p style="text-align:center; font-size:14px; margin-top:20px;">
+            Already have an account? <a href="login.html" style="color:var(--primary); text-decoration:none;">Login</a>
+        </p>
+    </div>
+
+    <script>
+        async function handleRegister() {
+            const user = {
+                name: document.getElementById('regName').value,
+                email: document.getElementById('regEmail').value,
+                pass: document.getElementById('regPass').value
+            };
+
+            if (!user.name || !user.email || !user.pass) return alert("Fill all fields");
+
+            // In a real app, you'd fetch('/api/register', { method: 'POST', ... })
+            // For now, let's simulate success
+            localStorage.setItem('isLoggedIn', 'true');
+            alert("Account Created Successfully!");
+            window.location.href = 'search.html';
+        }
+    </script>
+</body>
+
+</html>
