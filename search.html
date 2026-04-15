@@ -278,105 +278,118 @@
         </div>
     </div>
 
-    <script>
-        // FIXED: Using relative path for Render
-        const API_URL = '/api/jobs';
+    <>
+        
+    // 1. LOGIN PROTECTION: This runs immediately when the page loads
+                window.onload = function () {
+        const isLoggedIn = localStorage.getItem('isLoggedIn');
 
-        async function categorySearch(catName) {
-            document.getElementById('searchKeyword').value = catName;
-            await searchJobs();
+                // If user is not logged in, redirect them to login.html
+                if (isLoggedIn !== 'true') {
+                    alert("Please login with your Email and Mobile to view jobs.");
+                window.location.href = 'login.html';
+                return; 
         }
 
-        async function searchJobs() {
-            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
-            const degree = document.getElementById('searchDegree').value;
-
-            try {
-                const response = await fetch(API_URL);
-
-                // FIXED: matched variable name 'response'
-                if (!response.ok) throw new Error('API request failed');
-
-                const jobs = await response.json();
-
-                const matches = jobs.filter(j => {
-                    const matchDegree = (j.degree === degree);
-
-                    // Safely handle missing data
-                    const jobSkill = j.skill ? j.skill.toLowerCase() : "";
-                    const jobTitle = j.title ? j.title.toLowerCase() : "";
-
-                    const matchKeyword = (keyword === "" ||
-                        jobSkill.includes(keyword) ||
-                        jobTitle.includes(keyword));
-
-                    return matchDegree && matchKeyword;
-                });
-
-                localStorage.setItem('filteredJobs', JSON.stringify(matches));
-                window.location.href = 'results.html';
-            } catch (e) {
-                console.error(e);
-                alert("Cannot connect to server. Ensure your Render deployment is live!");
-            }
-        }
-
-        function adminLogin() {
-            const pass = prompt("Enter Admin Key:");
-            if (pass === "admin123") {
-                localStorage.setItem('isAdmin', 'true');
-                location.reload();
-            } else if (pass !== null) {
-                alert("Wrong password!");
-            }
-        }
-
-        function logout() {
-            localStorage.setItem('isAdmin', 'false');
-            location.reload();
-        }
-
-        window.onload = function () {
-            if (localStorage.getItem('isAdmin') === 'true') {
-                const adminDiv = document.getElementById('adminSection');
+                // 2. ADMIN PANEL CHECK: Shows hidden buttons if admin is logged in
+                if (localStorage.getItem('isAdmin') === 'true') {
+            const adminDiv = document.getElementById('adminSection');
                 const logoutBtn = document.getElementById('logoutBtn');
                 const loginBtn = document.getElementById('loginBtn');
 
                 if (adminDiv) adminDiv.classList.remove('hidden');
                 if (logoutBtn) logoutBtn.classList.remove('hidden');
                 if (loginBtn) loginBtn.classList.add('hidden');
-            }
-        };
+        }
+    };
 
-        async function addJob() {
-            const data = {
-                title: document.getElementById('newTitle').value,
+                // 3. MAIN API SETTINGS
+                const API_URL = '/api/jobs';
+
+                // 4. CATEGORY SEARCH FUNCTION
+                async function categorySearch(catName) {
+                    document.getElementById('searchKeyword').value = catName;
+                await searchJobs();
+    }
+
+                // 5. MAIN SEARCH LOGIC
+                async function searchJobs() {
+        const keyword = document.getElementById('searchKeyword').value.toLowerCase();
+                const degree = document.getElementById('searchDegree').value;
+
+                try {
+            const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('API request failed');
+
+                const jobs = await response.json();
+
+            const matches = jobs.filter(j => {
+                const matchDegree = (j.degree === degree);
+                const jobSkill = j.skill ? j.skill.toLowerCase() : "";
+                const jobTitle = j.title ? j.title.toLowerCase() : "";
+
+                const matchKeyword = (keyword === "" ||
+                jobSkill.includes(keyword) ||
+                jobTitle.includes(keyword));
+                return matchDegree && matchKeyword;
+            });
+
+                localStorage.setItem('filteredJobs', JSON.stringify(matches));
+                window.location.href = 'results.html';
+        } catch (e) {
+                    console.error(e);
+                alert("Connection error. Ensure your server is running!");
+        }
+    }
+
+                // 6. ADMIN FUNCTIONS
+                function adminLogin() {
+        const pass = prompt("Enter Admin Key:");
+                if (pass === "admin123") {
+                    localStorage.setItem('isAdmin', 'true');
+                location.reload();
+        } else if (pass !== null) {
+                    alert("Wrong password!");
+        }
+    }
+
+                function logout() {
+                    // Clear everything and go back to home
+                    localStorage.clear();
+                window.location.href = 'index.html';
+    }
+
+                // 7. POST JOB FUNCTION (ADMIN ONLY)
+                async function addJob() {
+        const data = {
+                    title: document.getElementById('newTitle').value,
                 company: document.getElementById('newCompany').value,
                 degree: document.getElementById('newDegree').value,
                 skill: "General",
                 salary: document.getElementById('newSalary').value,
                 type: "Full-Time"
-            };
+        };
 
-            if (!data.title || !data.company) {
-                alert("Designation and Company name are mandatory.");
+                if (!data.title || !data.company) {
+                    alert("Designation and Company name are mandatory.");
                 return;
-            }
+        }
 
-            try {
-                const res = await fetch(API_URL, {
+                try {
+            const res = await fetch(API_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+                headers: {'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
                 if (res.ok) {
                     alert("Job Published successfully!");
-                    location.reload();
-                }
-            } catch (e) {
-                alert("Error connecting to server.");
+                location.reload();
             }
+        } catch (e) {
+                    alert("Error connecting to server.");
         }
+    }
+        
     </script>
 </body>
 
