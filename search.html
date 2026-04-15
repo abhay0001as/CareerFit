@@ -282,14 +282,14 @@
         
     // 1. LOGIN PROTECTION: This runs immediately when the page loads
                 window.onload = function () {
-        const isLoggedIn = localStorage.getItem('isLoggedIn');
+                        // 1. Check if the user is logged in
+                        const isLoggedIn = localStorage.getItem('isLoggedIn');
 
-                // If user is not logged in, redirect them to login.html
-                if (isLoggedIn !== 'true') {
-                    alert("Please login with your Email and Mobile to view jobs.");
-                window.location.href = 'login.html';
-                return; 
-        }
+                        // 2. If NOT logged in, redirect to login.html immediately
+                        if (isLoggedIn !== 'true') {
+                            window.location.href = 'login.html';
+                            return; // This stops the rest of the page from loading
+                        }
 
                 // 2. ADMIN PANEL CHECK: Shows hidden buttons if admin is logged in
                 if (localStorage.getItem('isAdmin') === 'true') {
